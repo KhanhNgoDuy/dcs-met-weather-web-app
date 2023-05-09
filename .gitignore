@@ -1,0 +1,6 @@
+__pycache__/
+app/
+
+test.py
+test_sqlalchemy.py
+datalogger.py
