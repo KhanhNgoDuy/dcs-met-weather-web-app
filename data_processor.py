@@ -1,8 +1,7 @@
 import time
 import threading
 import keyboard
-import numpy as np
-from abc import abstractmethod
+import requests
 
 import utils
 from sensors import Anemometer, Thermometer, RainfallDetector, RainGauge, VisibilityMeter
@@ -180,21 +179,13 @@ class Station:
 
 
 if __name__ == '__main__':
-    # rain_gauge = RainGauge()
-    # rain_detector = RainfallDetector()
-    # thermometer = Thermometer()
-    #
-    # rain_processor = RainProcessor(rain_gauge, rain_detector)
-    # temperature_processor = TemperatureProcessor(thermometer)
-    #
-    # procs = [rain_processor, temperature_processor]
-
     station = Station()
+    URL = 'http://127.0.0.1:8000'
 
     while True:
         datalogger = station.get_data()
         station.update()
-        print(datalogger)
+        requests.post(URL, data=station.get_data())
 
         time.sleep(0.0001)
         if keyboard.is_pressed('q'):
