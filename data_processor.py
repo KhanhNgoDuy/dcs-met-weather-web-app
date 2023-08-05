@@ -155,31 +155,47 @@ class VisibilityProcessor:
         return self.dict
 
 
-def get_data(procs: list):
-    data_dict = {}
+class Station:
+    def __init__(self, is_controlled=False):
+        self.rainProcessor = RainProcessor(RainGauge(), RainfallDetector())
+        self.temperatureProcessor = TemperatureProcessor(Thermometer())
+        self.windProcessor = WindProcessor(Anemometer())
+        self.visibilityProcessor = VisibilityProcessor(VisibilityMeter())
 
-    for proc in procs:
-        data_dict.update(proc.get())
-    return data_dict
+        self.procs = [self.rainProcessor,
+                      self.temperatureProcessor,
+                      self.windProcessor,
+                      self.visibilityProcessor]
+
+    def get_data(self):
+        data_dict = {}
+
+        for proc in self.procs:
+            data_dict.update(proc.get())
+        return data_dict
+
+    def update(self):
+        for proc in self.procs:
+            proc.update()
 
 
 if __name__ == '__main__':
-    rain_gauge = RainGauge()
-    rain_detector = RainfallDetector()
-    thermometer = Thermometer()
+    # rain_gauge = RainGauge()
+    # rain_detector = RainfallDetector()
+    # thermometer = Thermometer()
+    #
+    # rain_processor = RainProcessor(rain_gauge, rain_detector)
+    # temperature_processor = TemperatureProcessor(thermometer)
+    #
+    # procs = [rain_processor, temperature_processor]
 
-    rain_processor = RainProcessor(rain_gauge, rain_detector)
-    temperature_processor = TemperatureProcessor(thermometer)
-
-    procs = [rain_processor, temperature_processor]
+    station = Station()
 
     while True:
-        datalogger = get_data(procs)
+        datalogger = station.get_data()
+        station.update()
         print(datalogger)
 
-        for proc in procs:
-            proc.update()
-
-        time.sleep(1)
+        time.sleep(0.0001)
         if keyboard.is_pressed('q'):
             break
