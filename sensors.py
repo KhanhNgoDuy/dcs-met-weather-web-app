@@ -60,8 +60,8 @@ class Anemometer(BaseSensor):
         return [round(self.wind_speed, 1), round(self.wind_dir, 1)]
 
     def update(self):
-        self.wind_speed += random.uniform(-self.speed_range['max'] / 20, self.speed_range['max'] / 20)
-        self.wind_dir += random.uniform(-self.dir_range['max'] / 20, self.dir_range['max'] / 20)
+        self.wind_speed += random.uniform(-self.speed_range['max'] / 1e+6, self.speed_range['max'] / 1e+6)
+        self.wind_dir += random.uniform(-self.dir_range['max'] / 1e+6, self.dir_range['max'] / 1e+6)
 
         self.temperature = temperature
 
@@ -96,7 +96,7 @@ class RainGauge(BaseSensor):
         return round(self.current_volume, 1)
 
     def update(self):
-        self.current_volume += random.uniform(0, self.volume_range['max']/20)
+        self.current_volume += random.uniform(0, self.volume_range['max']/1e+6)
         self.temperature = temperature
 
     def is_error(self):
@@ -147,7 +147,7 @@ class VisibilityMeter(BaseSensor):
         return self.visibility
 
     def update(self):
-        self.visibility += random.randrange(-self.visibility_range['max'], self.visibility_range['max'])
+        self.visibility += random.randrange(-self.visibility_range['max'], self.visibility_range['max'])/1e+6
         self.temperature = temperature
 
     def is_error(self):

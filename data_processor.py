@@ -220,9 +220,9 @@ if __name__ == '__main__':
         # if station.is_error():
         #     continue
 
-        # if (time.time() - start) > 1:
-        #     requests.post(URL, json=station.get_data())
-        #     start = time.time()
+        if (time.time() - start) > 1:
+            requests.post(URL, json=station.get_data())
+            start = time.time()
 
         time.sleep(0.5)
         if keyboard.is_pressed('q'):
