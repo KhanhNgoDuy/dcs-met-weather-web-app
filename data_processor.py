@@ -196,6 +196,9 @@ class Station:
 
         for proc in self.procs:
             data_dict.update(proc.get())
+        for key in data_dict.keys():
+            data_dict[key] = round(data_dict[key], 1)
+
         return data_dict
 
     def is_error(self):
@@ -215,13 +218,14 @@ if __name__ == '__main__':
     start = time.time()
 
     while True:
+        data_package = station.get_data()
         station.update()
         print('-->', station.get_data())
         # if station.is_error():
         #     continue
 
         if (time.time() - start) > 1:
-            requests.post(URL, json=station.get_data())
+            requests.post(URL, json=data_package)
             start = time.time()
 
         time.sleep(0.5)
