@@ -30,13 +30,13 @@ class RainProcessor:
         self.reset_perh()
 
     def reset_perm(self):
-        utils.Timer(10, self.reset_perm).start()
+        utils.Timer(1, self.reset_perm).start()
 
         self.dict['rain_per_min'] = self.rain_perm
         self.rain_perm = 0
 
     def reset_perh(self):
-        utils.Timer(30, self.reset_perh).start()
+        utils.Timer(6, self.reset_perh).start()
 
         self.dict['rain_per_hour'] = self.rain_perh
         self.rain_perh = 0
@@ -104,7 +104,7 @@ class WindProcessor:
                      'wind_direction_at_min': 0}
 
     def reset_perm(self):
-        thread = threading.Timer(60, self.reset_perm)
+        thread = threading.Timer(1, self.reset_perm)
         thread.daemon = True
         thread.start()
 
@@ -150,7 +150,7 @@ class VisibilityProcessor:
         self.max = float('-inf')
 
     def reset_perm(self):
-        utils.Timer(60, self.reset_perm).start()
+        utils.Timer(1, self.reset_perm).start()
 
         self.dict = {'visibility_max': self.max,
                      'visibility_min': self.min}
@@ -212,11 +212,12 @@ if __name__ == '__main__':
     while True:
         datalogger = station.get_data()
         station.update()
-        print('-->', station.get_data())
-        if station.is_error():
-            continue
+        # print('-->', station.get_data())
+        # if station.is_error():
+        #     continue
 
         if (time.time() - start) > 1:
+            print('in')
             requests.post(URL, data=station.get_data())
             start = time.time()
 
