@@ -58,6 +58,12 @@ class RainProcessor:
     def get(self):
         return self.dict
 
+    def is_error(self):
+        for sensor in [self.rain_gauge, self.rain_detector]:
+            if sensor.is_error():
+                return True
+        return False
+
 
 class TemperatureProcessor:
     """
@@ -72,6 +78,9 @@ class TemperatureProcessor:
 
     def get(self):
         return {'temperature': self.thermometer.data}
+
+    def is_error(self):
+        return self.thermometer.is_error()
 
 
 class WindProcessor:
@@ -96,8 +105,8 @@ class WindProcessor:
 
         self.dict = {'wind_speed_max': self.speed_max,
                      'wind_speed_min': self.speed_min,
-                     'wind_dir_atMax': self.dir_atMax,
-                     'wind_dir_atMin': self.dir_atMin}
+                     'wind_direction_at_max': self.dir_atMax,
+                     'wind_direction_at_min': self.dir_atMin}
         self.speed_min = float('inf')
         self.speed_max = float('-inf')
 
@@ -118,6 +127,9 @@ class WindProcessor:
 
     def get(self):
         return self.dict
+
+    def is_error(self):
+        return self.anemometer.is_error()
 
 
 class VisibilityProcessor:
@@ -153,6 +165,9 @@ class VisibilityProcessor:
     def get(self):
         return self.dict
 
+    def is_error(self):
+        return self.visibility_meter.is_error()
+
 
 class Station:
     def __init__(self, is_controlled=False):
@@ -167,11 +182,17 @@ class Station:
                       self.visibilityProcessor]
 
     def get_data(self):
-        data_dict = {}
+        data_dict = {'station_id': 1, 'password': "password123"}
 
         for proc in self.procs:
             data_dict.update(proc.get())
         return data_dict
+
+    def is_error(self):
+        for proc in self.procs:
+            if proc.is_error():
+                return True
+        return False
 
     def update(self):
         for proc in self.procs:
@@ -181,11 +202,15 @@ class Station:
 if __name__ == '__main__':
     station = Station()
     URL = 'http://127.0.0.1:8000'
+    start = time.time()
 
     while True:
         datalogger = station.get_data()
         station.update()
-        requests.post(URL, data=station.get_data())
+
+        if (time.time() - start) > 1:
+            requests.post(URL, data=station.get_data())
+            start = time.time()
 
         time.sleep(0.0001)
         if keyboard.is_pressed('q'):
