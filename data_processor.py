@@ -210,17 +210,15 @@ if __name__ == '__main__':
     start = time.time()
 
     while True:
-        datalogger = station.get_data()
         station.update()
         # print('-->', station.get_data())
         # if station.is_error():
         #     continue
 
         if (time.time() - start) > 1:
-            print('in')
-            requests.post(URL, data=station.get_data())
+            requests.post(URL, json=station.get_data())
             start = time.time()
 
-        time.sleep(0.0001)
+        time.sleep(0.5)
         if keyboard.is_pressed('q'):
             break

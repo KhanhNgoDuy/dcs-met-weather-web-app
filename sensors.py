@@ -33,7 +33,7 @@ class Thermometer(BaseSensor):
         return round(self.temperature, 1)
 
     def update(self):
-        self.temperature += random.uniform(-2, 2)
+        self.temperature += random.uniform(-1, 1) * 0.2
 
     def is_error(self):
         return not self.operating_range['min'] <= self.temperature <= self.operating_range['max']
