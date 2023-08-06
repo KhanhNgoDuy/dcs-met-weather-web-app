@@ -19,7 +19,9 @@ class RainProcessor:
         self.rain_gauge = rain_gauge
         self.rain_detector = rain_detector
 
-        self.dict = {}
+        self.dict = {'rain_per_min': 0,
+                     'rain_per_hour': 0,
+                     'rain_cumulative': 0}
         self.rain_perm = 0
         self.rain_perh = 0
         self.rain_cum = 0
@@ -96,7 +98,10 @@ class WindProcessor:
         self.speed_max = float('-inf')
         self.dir_atMin = 0
         self.dir_atMax = 0
-        self.dict = {}
+        self.dict = {'wind_speed_max': 0,
+                     'wind_speed_min': 0,
+                     'wind_direction_at_max': 0,
+                     'wind_direction_at_min': 0}
 
     def reset_perm(self):
         thread = threading.Timer(60, self.reset_perm)
@@ -140,7 +145,7 @@ class VisibilityProcessor:
     def __init__(self, visibility_meter: VisibilityMeter):
         self.visibility_meter = visibility_meter
 
-        self.dict = {}
+        self.dict = {'visibility_max': 0, 'visibility_min': 0}
         self.min = float('inf')
         self.max = float('-inf')
 
@@ -201,12 +206,13 @@ class Station:
 
 if __name__ == '__main__':
     station = Station()
-    URL = 'http://127.0.0.1:8000/api/records'
+    URL = 'http://127.0.0.1:8000/api/records/'
     start = time.time()
 
     while True:
         datalogger = station.get_data()
         station.update()
+        print('-->', station.get_data())
         if station.is_error():
             continue
 
