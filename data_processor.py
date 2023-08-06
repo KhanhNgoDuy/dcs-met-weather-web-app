@@ -197,7 +197,10 @@ class Station:
         for proc in self.procs:
             data_dict.update(proc.get())
         for key in data_dict.keys():
-            data_dict[key] = round(data_dict[key], 1)
+            if key in ['station_id', 'password']:
+                continue
+            print(data_dict[key])
+            data_dict[key] = round(float(data_dict[key]), 1)
 
         return data_dict
 
@@ -220,7 +223,6 @@ if __name__ == '__main__':
     while True:
         data_package = station.get_data()
         station.update()
-        print('-->', station.get_data())
         # if station.is_error():
         #     continue
 
@@ -228,6 +230,6 @@ if __name__ == '__main__':
             requests.post(URL, json=data_package)
             start = time.time()
 
-        time.sleep(0.5)
+        time.sleep(0.1)
         if keyboard.is_pressed('q'):
             break
