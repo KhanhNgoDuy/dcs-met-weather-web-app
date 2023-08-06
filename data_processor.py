@@ -201,12 +201,14 @@ class Station:
 
 if __name__ == '__main__':
     station = Station()
-    URL = 'http://127.0.0.1:8000'
+    URL = 'http://127.0.0.1:8000/api/records'
     start = time.time()
 
     while True:
         datalogger = station.get_data()
         station.update()
+        if station.is_error():
+            continue
 
         if (time.time() - start) > 1:
             requests.post(URL, data=station.get_data())
