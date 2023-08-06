@@ -98,10 +98,11 @@ class WindProcessor:
         self.speed_max = float('-inf')
         self.dir_atMin = 0
         self.dir_atMax = 0
-        self.dict = {'wind_speed_max': 0,
-                     'wind_speed_min': 0,
-                     'wind_direction_at_max': 0,
-                     'wind_direction_at_min': 0}
+        self.dict = {'wind_speed_max': self.speed_max,
+                     'wind_speed_min': self.speed_min,
+                     'wind_direction_at_max': self.dir_atMax,
+                     'wind_direction_at_min': self.dir_atMin}
+        self.reset_perm()
 
     def reset_perm(self):
         thread = threading.Timer(1, self.reset_perm)
@@ -126,6 +127,9 @@ class WindProcessor:
             self.speed_min = speed
             self.dir_atMin = direction
 
+        print(self.anemometer.data, end='\t')
+        print(self.speed_min, self.speed_max)
+
     def update(self):
         self._process()
         self.anemometer.update()
@@ -145,9 +149,10 @@ class VisibilityProcessor:
     def __init__(self, visibility_meter: VisibilityMeter):
         self.visibility_meter = visibility_meter
 
-        self.dict = {'visibility_max': 0, 'visibility_min': 0}
         self.min = float('inf')
         self.max = float('-inf')
+        self.dict = {'visibility_max': self.max, 'visibility_min': self.min}
+        self.reset_perm()
 
     def reset_perm(self):
         utils.Timer(1, self.reset_perm).start()
@@ -211,13 +216,13 @@ if __name__ == '__main__':
 
     while True:
         station.update()
-        # print('-->', station.get_data())
+        print('-->', station.get_data())
         # if station.is_error():
         #     continue
 
-        if (time.time() - start) > 1:
-            requests.post(URL, json=station.get_data())
-            start = time.time()
+        # if (time.time() - start) > 1:
+        #     requests.post(URL, json=station.get_data())
+        #     start = time.time()
 
         time.sleep(0.5)
         if keyboard.is_pressed('q'):
