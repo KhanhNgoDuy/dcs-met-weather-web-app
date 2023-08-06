@@ -23,17 +23,21 @@ class BaseSensor:
 
 # Nhiệt kế
 class Thermometer(BaseSensor):
-    operating_range = {'min': 0.0, 'max': 70.0}
+    operating_range = {'min': -10.0, 'max': 70.0}
 
     def __init__(self):
-        self.temperature = 30.0
+        self.temperature = 15.0
 
     @property
     def data(self):
         return round(self.temperature, 1)
 
     def update(self):
-        self.temperature += random.uniform(-1, 1) * 0.2
+        self.temperature += random.uniform(-1, 1) * 1e-3
+        if self.temperature < self.operating_range['min']:
+            self.temperature = self.operating_range['min']
+        if self.temperature > self.operating_range['max']:
+            self.temperature = self.operating_range['max']
 
     def is_error(self):
         return not self.operating_range['min'] <= self.temperature <= self.operating_range['max']
@@ -60,10 +64,22 @@ class Anemometer(BaseSensor):
         return [round(self.wind_speed, 1), round(self.wind_dir, 1)]
 
     def update(self):
-        self.wind_speed += random.uniform(-self.speed_range['max'] / 1e+6, self.speed_range['max'] / 1e+6)
-        self.wind_dir += random.uniform(-self.dir_range['max'] / 1e+6, self.dir_range['max'] / 1e+6)
+        # self.wind_speed += random.uniform(-self.speed_range['max'] / 1e+6, self.speed_range['max'] / 1e+6)
+        # self.wind_dir += random.uniform(-self.dir_range['max'] / 1e+6, self.dir_range['max'] / 1e+6)
+        self.wind_speed += random.uniform(-1/1e+6, 1/1e+6)
+        self.wind_dir += random.uniform(-1/1e+6, 1/1e+6)
 
         self.temperature = temperature
+
+        if self.wind_speed < self.speed_range['min']:
+            self.wind_speed = self.speed_range['min']
+        if self.wind_speed > self.speed_range['max']:
+            self.wind_speed = self.speed_range['max']
+
+        if self.wind_dir > self.dir_range['max']:
+            self.wind_dir -= self.dir_range['max']
+        if self.wind_dir < self.dir_range['min']:
+            self.wind_dir += self.dir_range['max']
 
     def is_error(self):
         return not self.speed_range['min'] <= self.wind_speed <= self.speed_range['max'] or \
@@ -149,6 +165,11 @@ class VisibilityMeter(BaseSensor):
     def update(self):
         self.visibility += random.randrange(-self.visibility_range['max'], self.visibility_range['max'])/1e+6
         self.temperature = temperature
+
+        if self.visibility > self.visibility_range['max']:
+            self.visibility = self.visibility_range['max']
+        if self.visibility < self.visibility_range['min']:
+            self.visibility = self.visibility_range['min']
 
     def is_error(self):
         return not self.operating_range['min'] <= self.temperature <= self.operating_range['max'] or \
